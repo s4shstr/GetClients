@@ -17,7 +17,7 @@ BLOCKSIZE = 1048576
 str1 = '['
 str2 = '.'
 k = 0
-firstClient = 'textzgdfnzfgn'
+firstClient = 'randomword'
 flag = False
 temppath = os.getenv('TEMP')
 
