@@ -16,7 +16,9 @@ import pyautogui,time
 BLOCKSIZE = 1048576
 str1 = '['
 str2 = '.'
+str3 = '<SelectedValues>'
 k = 0
+j = 0
 firstClient = 'randomword'
 flag = False
 temppath = os.getenv('TEMP')
@@ -66,8 +68,8 @@ with codecs.open(temppath + '/Clients.txt', 'r', 'cp1251') as sourceFile:
 
 
 #finding clients on txt file
-with io.open(temppath + '/Clients_new.txt', encoding='utf-8') as file:
-    for line in file:
+with io.open(temppath + '/Clients_new.txt', 'r', encoding='utf-8') as infile, io.open(temppath + '/Clients_new_out.txt', 'w',encoding='utf-8') as outfile:
+    for line in infile:
         if flag == True:
             break
         if str1 in line:
@@ -78,12 +80,26 @@ with io.open(temppath + '/Clients_new.txt', encoding='utf-8') as file:
                         if k == 1:
                             firstClient = line[i + 1 : i + 4]
                         print(line[i + 1 : i + 4])
+                        outfile.write(line[i + 1 : i + 4] + '\n')
                     if str2 == line[i + 5] and firstClient != line[i + 1 : i + 5]:
                         k = k + 1
                         if k == 1:
                             firstClient = line[i + 1 : i + 5]
                         print(line[i + 1 : i + 5])
+                        outfile.write(line[i + 1 : i + 5] + '\n')
                 if (firstClient == line[i + 1 : i + 4] or firstClient == line[i + 1 : i + 5]) and k > 1:
                     flag = True
                     break
 print("Колическо компаний: " + str(k))
+
+#creating xml file
+with open('./template.xml', 'r', encoding='utf-8') as infile_xml, open('./По клиенту, все типы.xml', 'w', encoding='utf-8') as outfile_xml:
+    for line in infile_xml:
+        if str3 in line:
+            j = j + 1
+        else:
+            outfile_xml.write(line)
+        if j == 1:
+            with io.open(temppath + '/Clients_new_out.txt', 'r',encoding='utf-8') as infile:
+                for line in infile:
+                    outfile_xml.write('<SelectedValues>' + line[:-1] + '</SelectedValues>' + '\n')
