@@ -27,39 +27,33 @@ temppath = os.getenv('TEMP')
 #get html web-page
 br = webdriver.Chrome('C:\chromedriver.exe')
 br.get('https://wiki.itfb.ru/display/CLIEN/Clients')
-
 pyautogui.keyDown('alt')
-time.sleep(.2)
 pyautogui.press('tab')
-time.sleep(.2)
 pyautogui.keyUp('alt')
-
 s_username = br.find_element_by_id('os_username')
 s_password = br.find_element_by_id('os_password')
 s_continue = br.find_element_by_id('loginButton')
 s_username.send_keys(str(input('Введите логин: ')))
 s_password.send_keys(str(getpass('Введите пароль: ')))
 s_continue.click()
-
 page = br.page_source
 file = codecs.open(temppath + '/clients.html', 'w', encoding = 'utf-8')
 file.write(page)
 file.close()
-br.quit()
 
 
 #conversion html to txt
 html = codecs.open(temppath + '/clients.html', 'r', 'utf-8')
 f = html.read()
-w = open(temppath + '/Clients.txt', 'w')
+w = open(temppath + '/clients.txt', 'w')
 w.write(html2text.html2text(f))
 html.close()
 w.close()
 
 
 #conversion to utf-8
-with codecs.open(temppath + '/Clients.txt', 'r', 'cp1251') as sourceFile:
-    with codecs.open(temppath + '/Clients_new.txt', 'w', 'utf8') as targetFile:
+with codecs.open(temppath + '/clients.txt', 'r', 'cp1251') as sourceFile:
+    with codecs.open(temppath + '/clients_new.txt', 'w', 'utf8') as targetFile:
         while True:
             contents = sourceFile.read(BLOCKSIZE)
             if not contents:
@@ -68,7 +62,7 @@ with codecs.open(temppath + '/Clients.txt', 'r', 'cp1251') as sourceFile:
 
 
 #finding clients on txt file
-with io.open(temppath + '/Clients_new.txt', 'r', encoding='utf-8') as infile, io.open(temppath + '/Clients_new_out.txt', 'w',encoding='utf-8') as outfile:
+with io.open(temppath + '/clients_new.txt', 'r', encoding='utf-8') as infile, io.open(temppath + '/clients_new_out.txt', 'w',encoding='utf-8') as outfile:
     for line in infile:
         if flag == True:
             break
@@ -93,13 +87,56 @@ with io.open(temppath + '/Clients_new.txt', 'r', encoding='utf-8') as infile, io
 print("Колическо компаний: " + str(k))
 
 #creating xml file
-with open('./template.xml', 'r', encoding='utf-8') as infile_xml, open('./По клиенту, все типы.xml', 'w', encoding='utf-8') as outfile_xml:
+with open('./template.xml', 'r', encoding='utf-8') as infile_xml, open(temppath + '/By client, all types.xml', 'w', encoding='utf-8') as outfile_xml:
     for line in infile_xml:
         if str3 in line:
             j = j + 1
         else:
             outfile_xml.write(line)
         if j == 1:
-            with io.open(temppath + '/Clients_new_out.txt', 'r',encoding='utf-8') as infile:
+            with io.open(temppath + '/clients_new_out.txt', 'r',encoding='utf-8') as infile:
                 for line in infile:
                     outfile_xml.write('<SelectedValues>' + line[:-1] + '</SelectedValues>' + '\n')
+
+
+#xml file upload
+br.get('http://hd.itfb.ru/index.pl?Action=AgentStatistics;Subaction=Import')
+s_username = br.find_element_by_id('User')
+s_password = br.find_element_by_id('Password')
+s_continue = br.find_element_by_id('LoginButton')
+s_username.send_keys(str(input('Введите логин: ')))
+s_password.send_keys(str(getpass('Введите пароль: ')))
+s_continue.click()
+s_continue = br.find_element_by_class_name('Field')
+s_continue.click()
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('space')
+pyautogui.typewrite('%temp%')
+pyautogui.press('enter')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.typewrite('By client, all types.xml')
+pyautogui.press('tab')
+pyautogui.press('tab')
+pyautogui.press('enter')
+pyautogui.press('tab')
+pyautogui.press('enter')
+s_continue = br.find_element_by_id('SaveAndFinish')
+s_continue.click()
+
+
+#deleting temp files
+os.remove(temppath + '/clients.html')
+os.remove(temppath + '/clients.txt')
+os.remove(temppath + '/clients_new.txt')
+os.remove(temppath + '/clients_new_out.txt')
+os.remove(temppath + '/By client, all types.xml')
