@@ -8,6 +8,9 @@ import codecs
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 import os
 from getpass import getpass
 import pyautogui,time
@@ -107,29 +110,9 @@ s_continue = br.find_element_by_id('LoginButton')
 s_username.send_keys(str(input('Введите логин: ')))
 s_password.send_keys(str(getpass('Введите пароль: ')))
 s_continue.click()
-s_continue = br.find_element_by_class_name('Field')
+WebDriverWait(br, 10).until(EC.presence_of_element_located((By.XPATH, '//input[@type="file"][@name="File"]'))).send_keys(temppath + '/By client, all types.xml')
+s_continue = br.find_element_by_class_name('Primary.CallForAction')
 s_continue.click()
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('space')
-pyautogui.typewrite('%temp%')
-pyautogui.press('enter')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.typewrite('By client, all types.xml')
-pyautogui.press('tab')
-pyautogui.press('tab')
-pyautogui.press('enter')
-pyautogui.press('tab')
-pyautogui.press('enter')
 s_continue = br.find_element_by_id('SaveAndFinish')
 s_continue.click()
 
